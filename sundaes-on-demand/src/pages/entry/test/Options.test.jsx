@@ -1,4 +1,5 @@
 import { render, screen } from '../../../test-utils/testing-library-utils';
+import userEvent from '@testing-library/user-event';
 
 import Options from '../Options';
 // import { OrderDetailsProdiver } from '../../../contexts/OrderDetails';
@@ -32,4 +33,19 @@ test('display image for each topping option from server', async () => {
     'M&Ms topping',
     'Hot fudge topping',
   ]);
+});
+
+test("don't update total if scoopsinput is invalid", async () => {
+  render(<Options optionType='scoops' />);
+
+  // expect button to be enabled after adding scoop
+  const vanillaInput = await screen.findByRole('spinbutton', {
+    name: 'Vanilla',
+  });
+  userEvent.clear(vanillaInput);
+  userEvent.type(vanillaInput, '-1');
+
+  // make sure scoops subtotal hasn't updated
+  const scoopsSubtotal = screen.getByText('Scoops total: $0.00');
+  expect(scoopsSubtotal).toBeInTheDocument();
 });

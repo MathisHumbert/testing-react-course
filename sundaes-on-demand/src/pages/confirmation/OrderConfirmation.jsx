@@ -3,9 +3,11 @@ import axios from 'axios';
 import { Button } from 'react-bootstrap';
 
 import { useOrderDetails } from '../../contexts/OrderDetails';
+import AlertBanner from '../common/AlertBanner';
 
 export default function OrderConfirmation({ setOrderPhase }) {
   const [orderNumber, setOrderNumber] = useState(null);
+  const [error, setError] = useState(false);
   const [, , resetOrder] = useOrderDetails();
 
   useEffect(() => {
@@ -13,9 +15,13 @@ export default function OrderConfirmation({ setOrderPhase }) {
       .post('http://localhost:3030/order')
       .then((res) => setOrderNumber(res.data.orderNumber))
       .catch((err) => {
-        // TODO: handle error here
+        setError(true);
       });
   }, []);
+
+  if (error) {
+    return <AlertBanner message={null} variant={null} />;
+  }
 
   if (orderNumber) {
     return (
